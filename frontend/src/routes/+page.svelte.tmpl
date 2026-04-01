@@ -1,0 +1,90 @@
+<script lang="ts">
+    import { Events } from "@wailsio/runtime";
+    import { GreetService } from "$lib/bindings/{{js .ModulePath}}";
+
+    let name = $state("");
+    let result = $state("Please enter your name below 👇");
+    let time = $state("Listening for Time event...");
+
+    const doGreet = () => {
+        let localName = name;
+        if (!localName) {
+            localName = "anonymous";
+        }
+        GreetService.Greet(localName)
+            .then((resultValue) => {
+                result = resultValue;
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+
+    Events.On("time", (timeValue) => {
+        time = timeValue.data;
+    });
+</script>
+
+<main
+    class="min-h-screen min-w-[320px] flex items-center justify-center bg-[#1b2636] text-white/90 selection:bg-blue-500 dark:bg-white dark:text-[#213547] transition-colors duration-300"
+>
+    <div
+        id="app"
+        class="max-w-[1280px] mx-auto p-8 text-center flex flex-col items-center justify-center"
+    >
+        <div class="flex gap-4">
+            <span data-wml-openURL="https://wails.io" class="cursor-pointer">
+                <img
+                    src="/wails.png"
+                    class="h-[6em] p-[1.5em] transition-filter duration-300 hover:drop-shadow-[0_0_2em_#e80000aa]"
+                    alt="Wails logo"
+                />
+            </span>
+            <span data-wml-openURL="https://svelte.dev" class="cursor-pointer">
+                <img
+                    src="/svelte.svg"
+                    class="h-[6em] p-[1.5em] transition-filter duration-300 hover:drop-shadow-[0_0_2em_#f7df1eaa]"
+                    alt="Svelte logo"
+                />
+            </span>
+        </div>
+
+        <h1 class="text-[3.2em] leading-[1.1] font-bold mt-4">
+            Wails + Svelte
+        </h1>
+
+        <div aria-label="result" class="h-5 leading-5 my-6 text-center">
+            {result}
+        </div>
+
+        <div class="card">
+            <div class="flex items-center">
+                <input
+                    aria-label="input"
+                    class="h-[30px] px-[10px] rounded-[3px] border-none outline-none text-black bg-[rgba(240,240,240,1)] antialiased transition-colors hover:bg-white focus:bg-white"
+                    bind:value={name}
+                    type="text"
+                    autocomplete="off"
+                />
+
+                <button
+                    aria-label="greet-btn"
+                    class="w-[60px] h-[30px] leading-[30px] rounded-[3px] border-none ml-5 px-2 cursor-pointer bg-transparent transition-all hover:bg-gradient-to-t hover:from-[#cfd9df] hover:to-[#e2ebf0] hover:text-[#333] dark:bg-[#f9f9f9] dark:text-black"
+                    on:click={doGreet}
+                >
+                    Greet
+                </button>
+            </div>
+        </div>
+
+        <footer class="mt-4 text-center">
+            <p class="text-sm opacity-80">
+                Click on the Wails logo to learn more
+            </p>
+            <p class="mt-2 text-sm italic">{time}</p>
+        </footer>
+    </div>
+</main>
+
+<style>
+</style>
